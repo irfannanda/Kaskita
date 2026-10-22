@@ -32,6 +32,29 @@ export function initializeTransactionForm() {
   });
 }
 
+function initializeThemeToggle() {
+  const toggle = document.querySelector('#theme-toggle');
+  const label = document.querySelector('#theme-toggle-label');
+  const icon = toggle?.querySelector('.theme-toggle__icon');
+
+  if (
+    !(toggle instanceof HTMLButtonElement) ||
+    !(label instanceof HTMLSpanElement) ||
+    !(icon instanceof HTMLSpanElement)
+  ) {
+    throw new Error('Tombol mode tema tidak ditemukan.');
+  }
+
+  toggle.addEventListener('click', () => {
+    const isDark = document.documentElement.dataset.theme !== 'dark';
+    document.documentElement.dataset.theme = isDark ? 'dark' : 'light';
+    toggle.setAttribute('aria-pressed', String(isDark));
+    toggle.setAttribute('aria-label', `Aktifkan mode ${isDark ? 'terang' : 'gelap'}`);
+    label.textContent = `Mode ${isDark ? 'terang' : 'gelap'}`;
+    icon.textContent = isDark ? '☀' : '☾';
+  });
+}
+
 /**
  * Menampilkan transaksi terbaru di daftar.
  * @param {Transaction[]} list
@@ -147,3 +170,4 @@ document.addEventListener('transaction:created', (event) => {
 
 renderTransactions([]);
 initializeTransactionForm();
+initializeThemeToggle();
