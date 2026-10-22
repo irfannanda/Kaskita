@@ -8,6 +8,11 @@ const DATE_FORMATTER = new Intl.DateTimeFormat('id-ID', {
   month: 'short',
   year: 'numeric',
 });
+const MONTH_FORMATTER = new Intl.DateTimeFormat('id-ID', {
+  month: 'long',
+  year: 'numeric',
+});
+let transactions = [];
 
 /**
  * Menghubungkan formulir transaksi dengan event untuk diterima modul lain.
@@ -61,22 +66,14 @@ function initializeThemeToggle() {
  */
 export function renderTransactions(list) {
   const transactionList = document.querySelector('#transaction-list');
-  const emptyState = document.querySelector('#transaction-empty');
 
-  if (
-    !(transactionList instanceof HTMLUListElement) ||
-    !(emptyState instanceof HTMLParagraphElement)
-  ) {
+  if (!(transactionList instanceof HTMLUListElement)) {
     throw new Error('Daftar transaksi tidak ditemukan.');
   }
 
-  transactionList.replaceChildren();
-  emptyState.hidden = list.length > 0;
-  transactionList.hidden = list.length === 0;
-
-  [...list]
-    .sort((first, second) => second.date.localeCompare(first.date))
-    .forEach((transaction) => transactionList.append(createTransactionItem(transaction)));
+  transactions = [...list];
+  updateFilterOptions();
+  renderFilteredTransactions();
 }
 
 function createTransactionItem(transaction) {
@@ -107,23 +104,98 @@ function formatTransactionDate(date) {
   return DATE_FORMATTER.format(new Date(`${date}T00:00:00`));
 }
 
-function addTransactionToList(transaction) {
+function initializeTransactionFilters() {
+  const categoryFilter = document.querySelector('#category-filter');
+  const monthFilter = document.querySelector('#month-filter');
+
+  if (
+    !(categoryFilter instanceof HTMLSelectElement) ||
+    !(monthFilter instanceof HTMLSelectElement)
+  ) {
+    throw new Error('Filter kategori atau bulan tidak ditemukan.');
+  }
+
+  categoryFilter.addEventListener('change', renderFilteredTransactions);
+  monthFilter.addEventListener('change', renderFilteredTransactions);
+}
+
+function updateFilterOptions() {
+  const categoryFilter = document.querySelector('#category-filter');
+  const monthFilter = document.querySelector('#month-filter');
   const transactionList = document.querySelector('#transaction-list');
   const emptyState = document.querySelector('#transaction-empty');
 
   if (
+    !(categoryFilter instanceof HTMLSelectElement) ||
+    !(monthFilter instanceof HTMLSelectElement) ||
     !(transactionList instanceof HTMLUListElement) ||
     !(emptyState instanceof HTMLParagraphElement)
   ) {
-    throw new Error('Daftar transaksi tidak ditemukan.');
+    throw new Error('Filter atau daftar transaksi tidak ditemukan.');
   }
 
-  const nextItem = [...transactionList.children].find(
-    (item) => item.dataset.date <= transaction.date
+  updateSelectOptions(
+    categoryFilter,
+    [...new Set(transactions.map((transaction) => transaction.category))].sort()
   );
-  transactionList.insertBefore(createTransactionItem(transaction), nextItem ?? null);
-  transactionList.hidden = false;
-  emptyState.hidden = true;
+  updateSelectOptions(
+    monthFilter,
+    [...new Set(transactions.map((transaction) => transaction.date.slice(0, 7)))]
+      .sort()
+      .reverse()
+  );
+}
+
+function updateSelectOptions(select, values) {
+  const selectedValue = values.includes(select.value) ? select.value : '';
+  const defaultLabel = select.id === 'category-filter' ? 'Semua kategori' : 'Semua bulan';
+  const options = [new Option(defaultLabel, '')];
+
+  values.forEach((value) => {
+    const label =
+      select.id === 'month-filter'
+        ? MONTH_FORMATTER.format(new Date(`${value}-01T00:00:00`))
+        : value;
+    options.push(new Option(label, value));
+  });
+
+  select.replaceChildren(...options);
+  select.value = selectedValue;
+}
+
+function renderFilteredTransactions() {
+  const transactionList = document.querySelector('#transaction-list');
+  const emptyState = document.querySelector('#transaction-empty');
+  const categoryFilter = document.querySelector('#category-filter');
+  const monthFilter = document.querySelector('#month-filter');
+
+  if (
+    !(transactionList instanceof HTMLUListElement) ||
+    !(emptyState instanceof HTMLParagraphElement) ||
+    !(categoryFilter instanceof HTMLSelectElement) ||
+    !(monthFilter instanceof HTMLSelectElement)
+  ) {
+    throw new Error('Filter atau daftar transaksi tidak ditemukan.');
+  }
+
+  const filteredTransactions = transactions
+    .filter((transaction) => {
+      const matchesCategory =
+        !categoryFilter.value || transaction.category === categoryFilter.value;
+      const matchesMonth = !monthFilter.value || transaction.date.startsWith(monthFilter.value);
+      return matchesCategory && matchesMonth;
+    })
+    .sort((first, second) => second.date.localeCompare(first.date));
+
+  transactionList.replaceChildren(
+    ...filteredTransactions.map((transaction) => createTransactionItem(transaction))
+  );
+  transactionList.hidden = filteredTransactions.length === 0;
+  emptyState.hidden = filteredTransactions.length > 0;
+  emptyState.textContent =
+    transactions.length === 0
+      ? 'Belum ada transaksi. Transaksi yang ditambahkan akan muncul di sini.'
+      : 'Tidak ada transaksi yang cocok dengan filter ini.';
 }
 
 function submitTransaction(form, status) {
@@ -165,9 +237,11 @@ function getLocalDate() {
 }
 
 document.addEventListener('transaction:created', (event) => {
-  addTransactionToList(event.detail);
+  transactions.unshift(event.detail);
+  renderTransactions(transactions);
 });
 
 renderTransactions([]);
 initializeTransactionForm();
 initializeThemeToggle();
+initializeTransactionFilters();
