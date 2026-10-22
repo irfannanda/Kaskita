@@ -282,6 +282,38 @@ select {
   letter-spacing: -0.025em;
 }
 
+.transaction-filters {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.transaction-filter {
+  display: grid;
+  gap: 7px;
+}
+
+.transaction-filter label {
+  color: var(--color-muted);
+  font-size: 0.8rem;
+  font-weight: 650;
+}
+
+.transaction-filter select {
+  width: 100%;
+  min-height: 44px;
+  padding: 9px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.transaction-filter select:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
 .transaction-list {
   display: grid;
   margin: 0;
@@ -361,5 +393,9 @@ select {
 
   .transaction-list-card {
     padding: 28px 36px;
+  }
+
+  .transaction-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
