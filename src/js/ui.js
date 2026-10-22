@@ -1,3 +1,14 @@
+const CURRENCY_FORMATTER = new Intl.NumberFormat('id-ID', {
+  style: 'currency',
+  currency: 'IDR',
+  maximumFractionDigits: 0,
+});
+const DATE_FORMATTER = new Intl.DateTimeFormat('id-ID', {
+  day: '2-digit',
+  month: 'short',
+  year: 'numeric',
+});
+
 /**
  * Menghubungkan formulir transaksi dengan event untuk diterima modul lain.
  */
@@ -19,6 +30,77 @@ export function initializeTransactionForm() {
     event.preventDefault();
     submitTransaction(form, status);
   });
+}
+
+/**
+ * Menampilkan transaksi terbaru di daftar.
+ * @param {Transaction[]} list
+ */
+export function renderTransactions(list) {
+  const transactionList = document.querySelector('#transaction-list');
+  const emptyState = document.querySelector('#transaction-empty');
+
+  if (
+    !(transactionList instanceof HTMLUListElement) ||
+    !(emptyState instanceof HTMLParagraphElement)
+  ) {
+    throw new Error('Daftar transaksi tidak ditemukan.');
+  }
+
+  transactionList.replaceChildren();
+  emptyState.hidden = list.length > 0;
+  transactionList.hidden = list.length === 0;
+
+  [...list]
+    .sort((first, second) => second.date.localeCompare(first.date))
+    .forEach((transaction) => transactionList.append(createTransactionItem(transaction)));
+}
+
+function createTransactionItem(transaction) {
+  const item = document.createElement('li');
+  const details = document.createElement('div');
+  const title = document.createElement('p');
+  const meta = document.createElement('p');
+  const amount = document.createElement('span');
+  const isIncome = transaction.type === 'income';
+
+  item.className = 'transaction-item';
+  item.dataset.date = transaction.date;
+  details.className = 'transaction-item__details';
+  title.className = 'transaction-item__title';
+  title.textContent = transaction.title;
+  meta.className = 'transaction-item__meta';
+  meta.textContent = `${formatTransactionDate(transaction.date)} · ${transaction.category}`;
+  amount.className = `transaction-item__amount transaction-item__amount--${
+    isIncome ? 'income' : 'expense'
+  }`;
+  amount.textContent = `${isIncome ? '+' : '-'}${CURRENCY_FORMATTER.format(transaction.amount)}`;
+  details.append(title, meta);
+  item.append(details, amount);
+  return item;
+}
+
+function formatTransactionDate(date) {
+  return DATE_FORMATTER.format(new Date(`${date}T00:00:00`));
+}
+
+function addTransactionToList(transaction) {
+  const transactionList = document.querySelector('#transaction-list');
+  const emptyState = document.querySelector('#transaction-empty');
+
+  if (
+    !(transactionList instanceof HTMLUListElement) ||
+    !(emptyState instanceof HTMLParagraphElement)
+  ) {
+    throw new Error('Daftar transaksi tidak ditemukan.');
+  }
+
+  const nextItem = [...transactionList.children].find(
+    (item) => item.dataset.date <= transaction.date
+  );
+  transactionList.insertBefore(createTransactionItem(transaction), nextItem ?? null);
+  transactionList.hidden = false;
+  emptyState.hidden = true;
 }
 
 function submitTransaction(form, status) {
@@ -59,4 +141,9 @@ function getLocalDate() {
   return new Date(date.getTime() - timezoneOffset).toISOString().slice(0, 10);
 }
 
+document.addEventListener('transaction:created', (event) => {
+  addTransactionToList(event.detail);
+});
+
+renderTransactions([]);
 initializeTransactionForm();
