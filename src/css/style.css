@@ -1,0 +1,223 @@
+:root {
+  color-scheme: light;
+  --color-income: #16834a;
+  --color-expense: #c43d3d;
+  --color-bg: #f3f6f4;
+  --color-surface: #ffffff;
+  --color-text: #1d2a23;
+  --color-muted: #68766e;
+  --color-border: #dce5df;
+  --color-primary: #237a4b;
+  --color-primary-hover: #195f39;
+  --color-focus: #8fc9a5;
+  --shadow-card: 0 18px 50px rgb(25 56 38 / 8%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background:
+    radial-gradient(ellipse at top left, rgb(35 122 75 / 8%), transparent 34rem),
+    var(--color-bg);
+  color: var(--color-text);
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+.page {
+  width: min(100% - 32px, 600px);
+  margin: 0 auto;
+  padding: 24px 0 48px;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.page-header__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-text);
+  font-size: 1.2rem;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.page-header__icon {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--color-primary);
+  color: var(--color-surface);
+  font-size: 1rem;
+}
+
+.page-header__caption {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.78rem;
+  text-align: right;
+}
+
+.transaction-card {
+  padding: 24px 20px;
+  border: 1px solid rgb(220 229 223 / 80%);
+  border-radius: 20px;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.transaction-card__intro {
+  margin-bottom: 24px;
+}
+
+.transaction-card__eyebrow {
+  margin: 0 0 8px;
+  color: var(--color-primary);
+  font-size: 0.75rem;
+  font-weight: 750;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.transaction-card h1 {
+  margin: 0;
+  font-size: clamp(1.55rem, 7vw, 2rem);
+  letter-spacing: -0.04em;
+}
+
+.transaction-card__description {
+  margin: 8px 0 0;
+  color: var(--color-muted);
+  line-height: 1.5;
+}
+
+.transaction-form {
+  display: grid;
+  gap: 18px;
+}
+
+.form-field {
+  display: grid;
+  gap: 8px;
+}
+
+.form-field label {
+  font-size: 0.9rem;
+  font-weight: 650;
+}
+
+.form-field input,
+.form-field select {
+  width: 100%;
+  min-height: 48px;
+  padding: 11px 13px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  outline: none;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.form-field input::placeholder {
+  color: #9aa69f;
+}
+
+.form-field input:focus,
+.form-field select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-focus);
+}
+
+.amount-input {
+  position: relative;
+}
+
+.amount-input__prefix {
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  color: var(--color-muted);
+  font-weight: 650;
+  transform: translateY(-50%);
+}
+
+.amount-input input {
+  padding-left: 43px;
+}
+
+.form-field__hint {
+  color: var(--color-muted);
+  font-size: 0.76rem;
+  line-height: 1.4;
+}
+
+.submit-button {
+  min-height: 50px;
+  margin-top: 4px;
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 11px;
+  background: var(--color-primary);
+  color: var(--color-surface);
+  cursor: pointer;
+  font-weight: 700;
+  transition: background-color 150ms ease, transform 150ms ease;
+}
+
+.submit-button:hover {
+  background: var(--color-primary-hover);
+}
+
+.submit-button:active {
+  transform: translateY(1px);
+}
+
+.submit-button:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+.form-status {
+  min-height: 1.25em;
+  margin: 0;
+  color: var(--color-income);
+  font-size: 0.88rem;
+  text-align: center;
+}
+
+.form-status--error {
+  color: var(--color-expense);
+}
+
+@media (min-width: 540px) {
+  .page {
+    padding-top: 40px;
+  }
+
+  .page-header {
+    margin-bottom: 36px;
+  }
+
+  .transaction-card {
+    padding: 36px;
+  }
+}
