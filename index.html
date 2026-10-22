@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Form untuk mencatat transaksi kas bersama di KasKita."
+    />
+    <title>Tambah Transaksi | KasKita</title>
+    <link rel="stylesheet" href="./src/css/style.css" />
+    <script type="module" src="./src/js/ui.js"></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-header">
+        <a class="page-header__brand" href="./index.html" aria-label="KasKita, halaman utama">
+          <span class="page-header__icon" aria-hidden="true">K</span>
+          <span>KasKita</span>
+        </a>
+        <p class="page-header__caption">Kas bersama, tercatat rapi</p>
+      </header>
+
+      <section class="transaction-card" aria-labelledby="form-title">
+        <div class="transaction-card__intro">
+          <p class="transaction-card__eyebrow">Transaksi baru</p>
+          <h1 id="form-title">Tambah transaksi</h1>
+          <p class="transaction-card__description">
+            Catat pemasukan atau pengeluaran kas bersama.
+          </p>
+        </div>
+
+        <form class="transaction-form" id="transaction-form">
+          <div class="form-field">
+            <label for="title">Nama transaksi</label>
+            <input
+              id="title"
+              name="title"
+              type="text"
+              maxlength="60"
+              autocomplete="off"
+              placeholder="Contoh: Beli galon"
+              required
+            />
+          </div>
+
+          <div class="form-field">
+            <label for="amount">Nominal</label>
+            <div class="amount-input">
+              <span class="amount-input__prefix" aria-hidden="true">Rp</span>
+              <input
+                id="amount"
+                name="amount"
+                type="number"
+                min="1"
+                step="1"
+                inputmode="numeric"
+                placeholder="0"
+                required
+              />
+            </div>
+            <small class="form-field__hint">Masukkan nominal dalam rupiah tanpa desimal.</small>
+          </div>
+
+          <div class="form-field">
+            <label for="type">Jenis transaksi</label>
+            <select id="type" name="type" required>
+              <option value="expense">Pengeluaran</option>
+              <option value="income">Pemasukan</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="category">Kategori</label>
+            <input
+              id="category"
+              name="category"
+              type="text"
+              pattern="[a-z0-9]+(-[a-z0-9]+)*"
+              title="Gunakan huruf kecil, angka, dan tanda hubung."
+              autocomplete="off"
+              placeholder="Contoh: rumah-tangga"
+              required
+            />
+            <small class="form-field__hint">
+              Gunakan huruf kecil dan tanda hubung, misalnya rumah-tangga.
+            </small>
+          </div>
+
+          <div class="form-field">
+            <label for="date">Tanggal</label>
+            <input id="date" name="date" type="date" required />
+          </div>
+
+          <button class="submit-button" type="submit">Tambah transaksi</button>
+          <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+    </main>
+  </body>
+</html>
