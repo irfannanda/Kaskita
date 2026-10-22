@@ -96,6 +96,24 @@
           <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
         </form>
       </section>
+
+      <section class="transaction-list-card" aria-labelledby="transaction-list-title">
+        <div class="transaction-list-card__header">
+          <div>
+            <p class="transaction-card__eyebrow">Riwayat kas</p>
+            <h2 id="transaction-list-title">Daftar transaksi</h2>
+          </div>
+        </div>
+        <p class="transaction-list__empty" id="transaction-empty">
+          Belum ada transaksi. Transaksi yang ditambahkan akan muncul di sini.
+        </p>
+        <ul
+          class="transaction-list"
+          id="transaction-list"
+          aria-label="Daftar transaksi terbaru"
+          hidden
+        ></ul>
+      </section>
     </main>
   </body>
 </html>
